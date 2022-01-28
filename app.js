@@ -4,21 +4,30 @@ require('express-async-errors');
 const express = require('express');
 const app = express();
 
-// database
+// ===== database
 const connectDB = require('./db/connect');
 
-// error handler
+// ===== router
+const productRouter = require('./routes/productRoutes');
+
+// ===== error handler
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
+// @@@@@@@@@@@@@@@@@@@@ MIDDLEWARE/ROUTES
+app.use(express.json());
+
+// ===== routes
 app.get('/', (req, res) => {
    res.send('<h1>File Upload Starter</h1>');
 });
 
-// middleware
+app.use('/api/v1/products', productRouter);
+
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
+// @@@@@@@@@@@@@@@@@@@@ APP LISTEN
 const port = process.env.PORT || 3000;
 
 const start = async () => {
@@ -26,7 +35,7 @@ const start = async () => {
       await connectDB(process.env.MONGO_URI);
 
       app.listen(port, () =>
-         console.log(`Server is listening on port ${port}...`)
+         console.log(`Server is listening on port ${port}...👍`)
       );
    } catch (error) {
       console.log(error);
