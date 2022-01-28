@@ -13,11 +13,11 @@ let imageValue;
 //  console.log(file);
 // })
 
+// este post lo sube al server ( a mi carpeta public/uploads ) con el controller uploadProductImage
 imageInputDOM.addEventListener('change', async e => {
    const imageFile = e.target.files[0];
    const formData = new FormData();
    formData.append('image', imageFile);
-   // este post lo sube al server ( a mi carpeta public/uploads ) con el controller uploadProductImage
    try {
       const {
          data: {

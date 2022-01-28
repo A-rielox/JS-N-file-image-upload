@@ -4,7 +4,7 @@ require('express-async-errors');
 const express = require('express');
 const app = express();
 
-// ===== para ver el archivo (imagen) en el body
+// ===== para ver el archivo (imagen) en el req en la propiedad file y tambien poder mover el archivo
 const fileUpload = require('express-fileupload');
 
 // ===== database
@@ -18,7 +18,7 @@ const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
 // @@@@@@@@@@@@@@@@@@@@ MIDDLEWARE/ROUTES
-app.use(express.static('./public')); // para hacer publica la carpeta donde está la imagen
+app.use(express.static('./public')); // 🐱
 app.use(express.json());
 app.use(fileUpload()); // para ver el archivo (imagen) en el body
 
@@ -48,3 +48,7 @@ const start = async () => {
 };
 
 start();
+
+//
+// 🐱 para hacer publicos los archivos estaticos
+// la imagen q se sube a través de página se sube 1ro al servidor, y se guardan en la carpeta "/uploads" de la carpeta "/public" y de aquí se sube a la DB ( fijarse en browser-app.js )
