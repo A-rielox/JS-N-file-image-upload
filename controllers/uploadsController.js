@@ -3,6 +3,7 @@ const { StatusCodes } = require('http-status-codes');
 
 // para subir al server ( a mi carpeta public/uploads )
 const uploadProductImage = async (req, res) => {
+   console.log(req);
    // console.log(req.files); 🐸
    let productImage = req.files.image;
 
@@ -16,6 +17,7 @@ const uploadProductImage = async (req, res) => {
    return res
       .status(StatusCodes.OK)
       .json({ image: { src: `/uploads/${productImage.name}` } });
+   //la respuesta es el path a la imagen en el servidor ( el atributo src ), q es el q se va a ocupar en el submit para pasar la imagen del server a la DB.
 };
 
 module.exports = { uploadProductImage };

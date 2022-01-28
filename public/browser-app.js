@@ -14,10 +14,13 @@ let imageValue;
 // })
 
 // este post lo sube al server ( a mi carpeta public/uploads ) con el controller uploadProductImage
+// x lo q veo, x el 'Content-Type': 'multipart/form-data', lo q está en "formData", que es mi "imagen", no se mete en el "req.body", sino en "req.file", gracias al header q se pone
+//  the multipart/form-data type allows you to send files through an HTTP POST request.
 imageInputDOM.addEventListener('change', async e => {
    const imageFile = e.target.files[0];
    const formData = new FormData();
    formData.append('image', imageFile);
+
    try {
       const {
          data: {
@@ -28,7 +31,7 @@ imageInputDOM.addEventListener('change', async e => {
             'Content-Type': 'multipart/form-data',
          },
       });
-
+      // imageValue es el src a donde se almacena en el server
       imageValue = src;
    } catch (error) {
       imageValue = null;
@@ -40,10 +43,11 @@ fileFormDOM.addEventListener('submit', async e => {
    e.preventDefault();
    const nameValue = nameInputDOM.value;
    const priceValue = priceInputDOM.value;
+
    try {
       const product = { name: nameValue, price: priceValue, image: imageValue };
 
-      // manda el archivo de mi server a la DB
+      // manda el src del archivo en mi server a la DB
       await axios.post(url, product);
       fetchProducts();
    } catch (error) {
@@ -52,7 +56,7 @@ fileFormDOM.addEventListener('submit', async e => {
 });
 
 async function fetchProducts() {
-   // el get trae los archivos de la DB
+   // el get manda un "Product.find({})" la DB, lo q tiene el "product.image" es solo el path al archivo en mi server, q va a ser la carpeta "/public/uploads/el-archivo", y la renderizada del front agarra de aqui la imagen
    try {
       const {
          data: { products },
@@ -60,13 +64,14 @@ async function fetchProducts() {
 
       const productsDOM = products
          .map(product => {
-            return `<article class="product">
-<img src="${product.image}" alt="${product.name}" class="img"/>
-<footer>
-<p>${product.name}</p>
-<span>$${product.price}</span>
-</footer>
-</article>`;
+            return `
+            <article class="product">
+               <img src="${product.image}" alt="${product.name}" class="img"/>
+               <footer>
+                  <p>${product.name}</p>
+                  <span>$${product.price}</span>
+               </footer>
+            </article>`;
          })
          .join('');
       containerDOM.innerHTML = productsDOM;

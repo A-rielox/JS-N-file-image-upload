@@ -12,3 +12,5 @@ router.route('/uploads').post(uploadProductImage);
 router.route('/').post(createProduct).get(getAllProducts);
 
 module.exports = router;
+
+//
