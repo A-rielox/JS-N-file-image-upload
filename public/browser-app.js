@@ -17,6 +17,7 @@ imageInputDOM.addEventListener('change', async e => {
    const imageFile = e.target.files[0];
    const formData = new FormData();
    formData.append('image', imageFile);
+   // este post lo sube al server ( a mi carpeta public/uploads ) con el controller uploadProductImage
    try {
       const {
          data: {
@@ -27,6 +28,7 @@ imageInputDOM.addEventListener('change', async e => {
             'Content-Type': 'multipart/form-data',
          },
       });
+
       imageValue = src;
    } catch (error) {
       imageValue = null;
@@ -41,6 +43,7 @@ fileFormDOM.addEventListener('submit', async e => {
    try {
       const product = { name: nameValue, price: priceValue, image: imageValue };
 
+      // manda el archivo de mi server a la DB
       await axios.post(url, product);
       fetchProducts();
    } catch (error) {
@@ -49,6 +52,7 @@ fileFormDOM.addEventListener('submit', async e => {
 });
 
 async function fetchProducts() {
+   // el get trae los archivos de la DB
    try {
       const {
          data: { products },

@@ -1,6 +1,7 @@
 const path = require('path');
 const { StatusCodes } = require('http-status-codes');
 
+// lo sube al server ( a mi carpeta public/uploads )
 const uploadProductImage = async (req, res) => {
    // console.log(req.files); 🐸
    let productImage = req.files.image;
