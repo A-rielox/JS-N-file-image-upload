@@ -4,6 +4,9 @@ require('express-async-errors');
 const express = require('express');
 const app = express();
 
+// ===== para ver el archivo (imagen) en el body
+const fileUpload = require('express-fileupload');
+
 // ===== database
 const connectDB = require('./db/connect');
 
@@ -15,7 +18,9 @@ const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
 // @@@@@@@@@@@@@@@@@@@@ MIDDLEWARE/ROUTES
+app.use(express.static('./public')); // para hacer publica la carpeta donde está la imagen
 app.use(express.json());
+app.use(fileUpload()); // para ver el archivo (imagen) en el body
 
 // ===== routes
 app.get('/', (req, res) => {
