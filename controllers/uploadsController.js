@@ -1,11 +1,30 @@
 const path = require('path');
 const { StatusCodes } = require('http-status-codes');
+const CustomError = require('../errors');
+const cloudinary = require('cloudinary').v2;
+const fs = require('fs'); // pa eliminar el temp
 
 // para subir al server ( a mi carpeta public/uploads )
-const uploadProductImage = async (req, res) => {
-   console.log(req);
+// para "sin" cloudinary
+const uploadProductImageLocal = async (req, res) => {
+   console.log(req.files);
    // console.log(req.files); 🐸
-   let productImage = req.files.image;
+   if (!req.files) {
+      throw new CustomError.BadRequestError('No file uploaded');
+   }
+
+   const productImage = req.files.image;
+
+   if (!productImage.mimetype.startsWith('image')) {
+      throw new CustomError.BadRequestError('Please upload an image');
+   }
+
+   const maxSize = 4000000;
+   if (productImage.size > maxSize) {
+      throw new CustomError.BadRequestError(
+         `Please upload an image smaller than ${maxSize} bytes`
+      );
+   }
 
    const imagePath = path.join(
       __dirname,
@@ -18,6 +37,26 @@ const uploadProductImage = async (req, res) => {
       .status(StatusCodes.OK)
       .json({ image: { src: `/uploads/${productImage.name}` } });
    //la respuesta es el path a la imagen en el servidor ( el atributo src ), q es el q se va a ocupar en el submit para pasar la imagen del server a la DB.
+};
+
+// todavia se va a ocupar el package "express-fileupload", para traer el archivo (parse that file) y almacenarlo en un temp-directory antes de mandarlo a cloudinary. Pa lo del temp hay q pasar las opciones en app.js en app.use(fileUpload({opciones}))
+const uploadProductImage = async (req, res) => {
+   // console.log(req.files.image); // aqui está la imagen, se crea altiro aqui ( en el server la carpeta temp y se pone el archivo )
+   // el primer arg es donde está la imagen en el temp
+   // la carpeta a la q mando la imagen la tengo q crear en cloudinary
+   // en cloudinary la imagen está accesible en el "secure_url"
+   // red yellow BUSCAR LAS OPCIONES Q SE PUEDEN PONER PARA Q OPTIMICE LAS IMAGENES ANTES DE ALMACENARLAS yellow red
+   const result = await cloudinary.uploader.upload(
+      req.files.image.tempFilePath,
+      { use_filename: true, folder: '07-File-upload' }
+   );
+
+   // pa eliminar el archivo del temp, tiene q estar despues del await, para q se eliminen despues de q se mande la respuesta de q ya se subieron a la nube
+   fs.unlinkSync(req.files.image.tempFilePath);
+
+   return res
+      .status(StatusCodes.OK)
+      .json({ image: { src: result.secure_url } });
 };
 
 module.exports = { uploadProductImage };
@@ -52,3 +91,47 @@ module.exports = { uploadProductImage };
 //      mv: [Function: mv]
 //    }
 //  }
+
+// ANTES DE CLOUDINARY
+/* 
+const path = require('path');
+const { StatusCodes } = require('http-status-codes');
+const CustomError = require('../errors');
+
+// para subir al server ( a mi carpeta public/uploads )
+const uploadProductImage = async (req, res) => {
+   console.log(req.files);
+   // console.log(req.files); 🐸
+   if (!req.files) {
+      throw new CustomError.BadRequestError('No file uploaded');
+   }
+
+   const productImage = req.files.image;
+
+   if (!productImage.mimetype.startsWith('image')) {
+      throw new CustomError.BadRequestError('Please upload an image');
+   }
+
+   const maxSize = 4000000;
+   if (productImage.size > maxSize) {
+      throw new CustomError.BadRequestError(
+         `Please upload an image smaller than ${maxSize} bytes`
+      );
+   }
+
+   const imagePath = path.join(
+      __dirname,
+      '../public/uploads/' + `${productImage.name}`
+   );
+
+   await productImage.mv(imagePath); // 🐥
+
+   return res
+      .status(StatusCodes.OK)
+      .json({ image: { src: `/uploads/${productImage.name}` } });
+   //la respuesta es el path a la imagen en el servidor ( el atributo src ), q es el q se va a ocupar en el submit para pasar la imagen del server a la DB.
+};
+
+module.exports = { uploadProductImage };
+
+*/
