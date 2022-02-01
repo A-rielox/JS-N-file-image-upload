@@ -42,7 +42,8 @@ const uploadProductImageLocal = async (req, res) => {
 // todavia se va a ocupar el package "express-fileupload", para traer el archivo (parse that file) y almacenarlo en un temp-directory antes de mandarlo a cloudinary. Pa lo del temp hay q pasar las opciones en app.js en app.use(fileUpload({opciones}))
 const uploadProductImage = async (req, res) => {
    // console.log(req.files.image); // aqui está la imagen, se crea altiro aqui ( en el server la carpeta temp y se pone el archivo )
-   // el primer arg es donde está la imagen en el temp
+   // al ocupar la opcion en app.js ( app.use(fileUpload({ useTempFiles: true })) ) el archivo ahora está en "req.files.image.tempFilePath" q es lo q paso como parametro acå abajo
+   // el 1er arg es donde está la imagen en el temp "req.files..."
    // la carpeta a la q mando la imagen la tengo q crear en cloudinary
    // en cloudinary la imagen está accesible en el "secure_url"
    // red yellow BUSCAR LAS OPCIONES Q SE PUEDEN PONER PARA Q OPTIMICE LAS IMAGENES ANTES DE ALMACENARLAS yellow red

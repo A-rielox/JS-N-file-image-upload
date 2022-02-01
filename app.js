@@ -4,7 +4,7 @@ require('express-async-errors');
 const express = require('express');
 const app = express();
 
-// ===== para ver el archivo (imagen) en el req en la propiedad file y tambien poder mover el archivo
+// ===== para ver el archivo (imagen) en el req en la propiedad file, tambien poder mover el archivo y poder arregla todo para tener el temp directory
 const fileUpload = require('express-fileupload');
 const cloudinary = require('cloudinary').v2;
 cloudinary.config({
@@ -24,9 +24,9 @@ const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
 // @@@@@@@@@@@@@@@@@@@@ MIDDLEWARE/ROUTES
-app.use(express.static('./public')); // 🐱
+app.use(express.static('./public')); // 🐱 para la imagen
 app.use(express.json());
-app.use(fileUpload({ useTempFiles: true })); // para ver el archivo (imagen) en el body
+app.use(fileUpload({ useTempFiles: true })); // para ver el archivo (imagen) en el body, y arregle para tener el temp
 
 // ===== routes
 app.get('/', (req, res) => {
